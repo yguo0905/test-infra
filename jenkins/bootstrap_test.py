@@ -26,6 +26,7 @@ import os
 import re
 import select
 import signal
+import sys
 import subprocess
 import tempfile
 import time
@@ -35,6 +36,8 @@ import bootstrap
 
 import yaml
 
+sys.path.insert(1, os.path.join(sys.path[0], '../jobs'))
+import config_sort
 
 BRANCH = 'random_branch'
 BUILD = 'random_build'
@@ -2259,7 +2262,7 @@ class JobTest(unittest.TestCase):
                             ('--stage-suffix=', suffix, job, args))
 
     def test_config_is_sorted(self):
-        """Test jobs/config.json is sorted."""
+        """Test jobs/config.json and prow/config.yaml are sorted."""
         with open(bootstrap.test_infra('jobs/config.json')) as fp:
             original = fp.read()
             expect = json.dumps(
@@ -2269,7 +2272,14 @@ class JobTest(unittest.TestCase):
                 separators=(',', ': ')
                 ) + '\n'
             if original != expect:
-                self.fail('config.json is not sorted, please run jobs/config_sort.py')
+                self.fail('jobs/config.json is not sorted, please run '
+                          '`bazel run //jobs:config_sort`')
+        with open(bootstrap.test_infra('prow/config.yaml')) as fp:
+            original = fp.read()
+            expect = config_sort.sorted_prow_config().getvalue()
+            if original != expect:
+                self.fail('prow/config.yaml is not sorted, please run '
+                          '`bazel run //jobs:config_sort`')
 
 
 if __name__ == '__main__':

@@ -1,5 +1,15 @@
 package(default_visibility = ["//visibility:public"])
 
+py_binary(
+    name = "config_sort",
+    srcs = ["config_sort.py"],
+    data = [
+        ":jobs",
+        "//prow:configs",
+    ],
+    deps = ["@ruamel_yaml//ruamel/yaml:ruamel.yaml"],
+)
+
 filegroup(
     name = "jobs",
     srcs = glob([

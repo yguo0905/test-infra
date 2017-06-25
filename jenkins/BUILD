@@ -12,7 +12,11 @@ py_test(
         "//jobs",
         "//prow:config.yaml",
     ],
-    deps = ["@yaml//:yaml"],
+    deps = [
+        "//jobs:config_sort",
+        "@yaml//:yaml",
+        "@ruamel_yaml//ruamel/yaml:ruamel.yaml",
+    ]
 )
 
 filegroup(
